@@ -58,7 +58,7 @@ commands:
               ls -la
               npm run migrations:revert
             fi
-          when: << parameters.when >>
+       #   when: << parameters.when >>
 
 jobs:
 
