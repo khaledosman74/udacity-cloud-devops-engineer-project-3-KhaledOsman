@@ -292,18 +292,16 @@ jobs:
           command: |
             npm run migrations > migration_status
       - run:
-          name: Send migration results to memstash
+          name: Send migration results to kvdb.io
           working_directory: ./backend
           command: |
-            if grep -q "has been executed successfully" migration_status
-            then
-              echo "DB migration was successful, will update memstash..."
-              curl -H "Content-Type: text/plain" -H "token: 2a9e15d6-b9fa-4b1f-a5dc-e3b9643a9b63" --request PUT --data "success" https://api.memstash.io/values/DB_MIGRATION_${CIRCLE_WORKFLOW_ID:0:7}
-            else
-              echo "DB migration failed, please verify setup! Probably the database already exists. Verify setup!"
-              curl -H "Content-Type: text/plain" -H "token: 2a9e15d6-b9fa-4b1f-a5dc-e3b9643a9b63" --request PUT --data "failure" https://api.memstash.io/values/DB_MIGRATION_${CIRCLE_WORKFLOW_ID:0:7}
-            fi
-            echo "WorkflowID=${CIRCLE_WORKFLOW_ID:0:7}"
+              if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
+              then
+                  # If you are using memstash.io, generate the token "7933fe63-4687-4fa1-8426-aa25aa1730ec" on the website
+                  curl -H "Content-Type: text/plain" -H "token: 7933fe63-4687-4fa1-8426-aa25aa1730ec" --request PUT --data "1" https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID:0:7}
+                  # If you are using kvdb.io, generate the bucket ID "9GE4jRtKznmVKRfvdBABBe" in your local terminal first
+                  curl https://kvdb.io/9GE4jRtKznmVKRfvdBABBe/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
+              fi
       - destroy_environment:
           id: ${CIRCLE_WORKFLOW_ID:0:7}
           when: on_fail
