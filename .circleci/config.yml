@@ -464,7 +464,7 @@ jobs:
       - run:
           name: Clean up old environment
           command: |
-            OldWorkflowID=$(curl --insecure https://kvdb.io/7ba7qPivESWJNPB5WWBL8z/migration_<< parameters.id >>)
+            OldWorkflowID=$(curl --insecure https://kvdb.io/7ba7qPivESWJNPB5WWBL8z/migration_$\{CIRCLE_WORKFLOW_ID:0:7})
             CurrentWorkflowID=${CIRCLE_WORKFLOW_ID:0:7}
 
             if [[ "$CurrentWorkflowID" != "$OldWorkflowID" ]]
