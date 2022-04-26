@@ -24,7 +24,7 @@ commands:
       - run:
           name: Destroy udapeople backend cfn stack
           command: |
-            aws cloudformation delete-stack --stack-name udapeople-backend-<< workflow_id >>
+            aws cloudformation delete-stack --stack-name udapeople-backend-<< parameters.workflow_id >>
           environment:
             TERM: xterm-256color
           #when: << parameters.when >>
@@ -32,7 +32,7 @@ commands:
           name: Destroy udapeople frontend cfn stack and S3 bucket
           command: |
             aws s3 rm s3://udapeople-kk1j287dhjppmz4378 --recursive
-            aws cloudformation delete-stack --stack-name udapeople-frontend-<< workflow_id >>
+            aws cloudformation delete-stack --stack-name udapeople-frontend-<< parameters.workflow_id >>
           environment:
               TERM: xterm-256color
           #when: << parameters.when >>
@@ -49,7 +49,7 @@ commands:
           name: Revert migrations
           working_directory: ./backend
           command: |
-            SUCCESS=$(curl --insecure https://kvdb.io/7ba7qPivESWJNPB5WWBL8z/migration_<< workflow_id >>)
+            SUCCESS=$(curl --insecure https://kvdb.io/7ba7qPivESWJNPB5WWBL8z/migration_<< parameters.workflow_id >>)
             echo $SUCCESS
             if [[ "$SUCCESS" == "success" ]]
             then
@@ -325,7 +325,7 @@ jobs:
           name: Rebuild frontend with backend API Url
           working_directory: ./frontend
           command: |
-            export API_URL=$(curl --insecure https://kvdb.io/7ba7qPivESWJNPB5WWBL8z/migration_<< workflow_id >>)
+            export API_URL=$(curl --insecure https://kvdb.io/7ba7qPivESWJNPB5WWBL8z/migration_<< parameters.workflow_id >>)
             echo "${API_URL}"
             npm run build
       - run:
@@ -464,7 +464,7 @@ jobs:
       - run:
           name: Clean up old environment
           command: |
-            OldWorkflowID=$(curl --insecure https://kvdb.io/7ba7qPivESWJNPB5WWBL8z/migration_<< workflow_id >>)
+            OldWorkflowID=$(curl --insecure https://kvdb.io/7ba7qPivESWJNPB5WWBL8z/migration_<< parameters.workflow_id >>)
             CurrentWorkflowID=${CIRCLE_WORKFLOW_ID:0:7}
 
             if [[ "$CurrentWorkflowID" != "$OldWorkflowID" ]]
