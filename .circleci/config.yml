@@ -291,7 +291,6 @@ jobs:
           command: |
             npm install
             npm run migrations > migrations_dump.txt
-            npm fund
       - run:
           name: Send migration results to kvdb.io
           working_directory: ./backend
