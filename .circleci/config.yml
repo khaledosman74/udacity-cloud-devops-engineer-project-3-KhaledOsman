@@ -247,7 +247,7 @@ jobs:
     steps:
       - checkout
       - add_ssh_keys:
-          fingerprints: ["0e:cc:af:c3:15:97:b0:96:ca:28:5e:c6:0c:88:73:a2"]
+          fingerprints: ["b6:76:f3:aa:f6:a5:46:85:3d:c8:0b:6b:bc:4d:10:f7"]
       - attach_workspace:
           at: .
       - run:
@@ -263,7 +263,7 @@ jobs:
             pwd &&
             ls -la
             cat inventory
-            ansible-playbook -i inventory configure-server.yaml --private-key udacity.pem
+            ansible-playbook -i inventory configure-server.yaml
       #- destroy_environment:
       #    id: ${CIRCLE_WORKFLOW_ID:0:7}
       #    when: on_fail
@@ -350,7 +350,7 @@ jobs:
     steps:
       - checkout
       - add_ssh_keys:
-          fingerprints: ["0e:cc:af:c3:15:97:b0:96:ca:28:5e:c6:0c:88:73:a2"]
+          fingerprints: ["b6:76:f3:aa:f6:a5:46:85:3d:c8:0b:6b:bc:4d:10:f7"]
       - attach_workspace:
           at: .
       - run:
