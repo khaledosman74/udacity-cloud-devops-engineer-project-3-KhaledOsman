@@ -400,9 +400,9 @@ jobs:
       - run:
           name: Backend smoke test.
           working_directory: ./backend
+          #curl "$BACKEND_URL/api/status"
           command: |
             export API_URL="http://${BACKEND_IP}:3030"
-            #curl "$BACKEND_URL/api/status"
             echo "${API_URL}"
             if curl "${API_URL}/api/status" | grep "ok"
             then
