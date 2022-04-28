@@ -226,7 +226,7 @@ jobs:
               --tags project=udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
       - run:
           name: Add backend ip to ansible inventory
-          working_directory: ./.circleci/ansible
+          #working_directory: ./.circleci/ansible
           command: |
             aws ec2 describe-instances \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
@@ -252,7 +252,7 @@ jobs:
           at: .
       - run:
           name: Install dependencies
-          working_directory: ./.circleci/ansible
+          #working_directory: ./.circleci/ansible
           command: |
             apk add --update ansible
             ansible --version
@@ -369,7 +369,7 @@ jobs:
             aws --version
       - run:
           name: Deploy backend
-          working_directory: ./.circleci/ansible
+          #working_directory: ./.circleci/ansible
           command: |
             cat .circleci/ansible/inventory.txt
             ansible-playbook -i .circleci/ansible/inventory.txt deploy-server.yaml -vv
