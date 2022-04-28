@@ -258,13 +258,7 @@ jobs:
             ansible --version
             cat .circleci/ansible/inventory.txt
       - run:
-         # name: Configure server
-         # working_directory: ./.circleci/ansible
-         # command: |
-         #   pwd &&
-         #   ls -la
-         #   cat inventory
-         #   ansible-playbook -i inventory configure-server.yaml
+         
           name: Configure server
           working_directory: ./.circleci/ansible
           command: |
@@ -274,7 +268,14 @@ jobs:
       - destroy_environment:
           id: ${CIRCLE_WORKFLOW_ID:0:7}
           when: on_fail
-
+          
+# name: Configure server
+         # working_directory: ./.circleci/ansible
+         # command: |
+         #   pwd &&
+         #   ls -la
+         #   cat inventory
+         #   ansible-playbook -i inventory configure-server.yaml
 
   run-migrations:
     executor: node
