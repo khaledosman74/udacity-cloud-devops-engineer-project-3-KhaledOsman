@@ -521,6 +521,10 @@ workflows:
       - configure-infrastructure:
           requires:
             - deploy-infrastructure
+            - test-backend
+            - test-frontend
+            - scan-backend
+            - scan-frontend
       - run-migrations:
           requires:
             - test-backend
