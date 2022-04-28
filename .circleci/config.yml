@@ -267,7 +267,10 @@ jobs:
          #   ansible-playbook -i inventory configure-server.yaml
           name: Configure server
           working_directory: ./.circleci/ansible
-          command: ansible-playbook -i inventory.txt configure-server.yaml
+          command: |
+
+          cat inventory.txt
+          ansible-playbook -i inventory.txt configure-server.yaml
 
       - destroy_environment:
           id: ${CIRCLE_WORKFLOW_ID:0:7}
