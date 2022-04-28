@@ -300,7 +300,7 @@ jobs:
             npm run build
             npm run migrations > migrations_dump.txt
             cat migrations_dump.txt
-            
+
       - run:
           name: Send migration results to kvdb.io
           working_directory: ./backend
@@ -373,9 +373,9 @@ jobs:
             aws --version
       - run:
           name: Deploy backend
-          #working_directory: ./.circleci/ansible
+          working_directory: ./.circleci/ansible
           command: |
-            cat .circleci/ansible/inventory.txt
+            cat inventory.txt
             ansible-playbook -i .circleci/ansible/inventory.txt deploy-server.yaml -vv
             
       - destroy_environment:
