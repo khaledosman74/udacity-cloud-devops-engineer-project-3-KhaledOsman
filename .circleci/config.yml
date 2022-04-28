@@ -7,7 +7,7 @@ executors:
       - image: circleci/node:13.8.0
   python:
     docker:
-      - image: circleci/python:3.7-alpine3.11
+      - image: python:3.7-alpine3.11
   aws:
     docker:
       - image: amazon/aws-cli
