@@ -7,7 +7,7 @@ executors:
       - image: circleci/node:13.8.0
   python:
     docker:
-      - image: python:3.9.0-alpine
+      - image: circleci/python:3.6.2
   aws:
     docker:
       - image: amazon/aws-cli
@@ -255,6 +255,7 @@ jobs:
           #working_directory: ./.circleci/ansible
           command: |
             apk add --update ansible
+            apk add --no-cache openssh
             ansible --version
             cat .circleci/ansible/inventory.txt
       - run:
