@@ -241,7 +241,8 @@ jobs:
           id: ${CIRCLE_WORKFLOW_ID:0:7}
           when: on_fail
 
-
+            #apk add --update ansible
+            #apk add --no-cache openssh
   configure-infrastructure:
     executor: python
     steps:
@@ -254,12 +255,10 @@ jobs:
           name: Install dependencies
           #working_directory: ./.circleci/ansible
           command: |
-            apk add --update ansible
-            apk add --no-cache openssh
+            sudo apt-get update
             ansible --version
             cat .circleci/ansible/inventory.txt
-      - run:
-         
+      - run:         
           name: Configure server
           working_directory: ./.circleci/ansible
           command: |
