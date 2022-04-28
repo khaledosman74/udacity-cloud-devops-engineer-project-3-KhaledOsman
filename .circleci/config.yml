@@ -247,7 +247,7 @@ jobs:
     steps:
       - checkout
       - add_ssh_keys:
-          fingerprints: [ "3d:20:11:f8:50:9e:e6:02:c3:63:c9:2d:f5:c8:a0:40" ] 
+          fingerprints: ["a6:bb:03:fc:54:95:69:ac:f8:50:ec:42:9a:c3:08:41"] 
       - attach_workspace:
           at: .
       - run:
@@ -268,7 +268,7 @@ jobs:
       - destroy_environment:
           id: ${CIRCLE_WORKFLOW_ID:0:7}
           when: on_fail
-          
+
 # name: Configure server
          # working_directory: ./.circleci/ansible
          # command: |
@@ -358,7 +358,7 @@ jobs:
     steps:
       - checkout
       - add_ssh_keys:
-          fingerprints: ["3d:20:11:f8:50:9e:e6:02:c3:63:c9:2d:f5:c8:a0:40"]
+          fingerprints: ["a6:bb:03:fc:54:95:69:ac:f8:50:ec:42:9a:c3:08:41"]
       - attach_workspace:
           at: .
       - run:
