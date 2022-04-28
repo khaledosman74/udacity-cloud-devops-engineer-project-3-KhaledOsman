@@ -255,7 +255,6 @@ jobs:
           #working_directory: ./.circleci/ansible
           command: |
             apk add --update ansible
-            apk add --no-cache openssh
             ansible --version
             cat .circleci/ansible/inventory.txt
       - run:
