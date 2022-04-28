@@ -255,6 +255,9 @@ jobs:
           #working_directory: ./.circleci/ansible
           command: |
             apk add --update ansible
+            apk add openssh
+            rc-update add sshd
+            service sshd start
             ansible --version
             cat .circleci/ansible/inventory.txt
       - run:
