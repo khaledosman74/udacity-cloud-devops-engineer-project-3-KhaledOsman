@@ -211,10 +211,11 @@ jobs:
       - run:
           name: Get backend url
           command: |
+            export BACKEND_IP=$(aws ec2 describe-instances \
+              --query 'Reservations[*].Instances[*].PublicIpAddress' \
+              --filters "Name=tag:project,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}")
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
-
-
       - run:
           name: Deploy frontend infrastructure
           working_directory: ./.circleci/files
@@ -401,6 +402,9 @@ jobs:
           name: Backend smoke test.
           working_directory: ./backend
           command: |
+            export BACKEND_IP=$(aws ec2 describe-instances \
+              --query 'Reservations[*].Instances[*].PublicIpAddress' \
+              --filters "Name=tag:project,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}")
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
             curl "$BACKEND_URL/api/status"
@@ -410,6 +414,7 @@ jobs:
             else
                return 1
             fi
+            
       - run:
           name: Frontend smoke test.
           working_directory: ./backend
