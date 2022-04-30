@@ -355,6 +355,8 @@ jobs:
           fingerprints: ["a6:bb:03:fc:54:95:69:ac:f8:50:ec:42:9a:c3:08:41"]
       - attach_workspace:
           at: .
+      - restore_cache:
+          keys: [backend-deps]
       - run:
           name: Install dependencies
           working_directory: /tmp
@@ -363,6 +365,17 @@ jobs:
             ansible --version
             pip install awscli
             aws --version
+
+      - run:
+          name: Package Backend
+          command: |
+            cd backend
+            npm run build
+            tar -czf https://github.com/prometheus/node_exporter/releases/download/v0.17.0/node_exporter-0.17.0.linux-amd64.tar.gz dist/* package*
+
+            cd .. 
+            cp backend/artifact.tar.gz .circleci/ansible/roles/deploy/files
+
       - run:
           name: Deploy backend
           working_directory: ./.circleci/ansible
