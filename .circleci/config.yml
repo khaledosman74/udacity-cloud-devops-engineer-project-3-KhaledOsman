@@ -199,6 +199,31 @@ jobs:
           name: Install dependencies
           command: yum install -y tar gzip
       - run:
+          name: Getting the old workflow id
+          command: |
+            # Fetch the Old workflow ID
+            export OldWorkflowID=$(aws cloudformation \
+            list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+            --no-paginate --output text)
+            echo OldWorkflowID: "${OldWorkflowID}"
+            echo CIRCLE_WORKFLOW_ID "${CIRCLE_WORKFLOW_ID:0:7}"
+            # storing old workflow id value in KVDB
+            curl https://kvdb.io/7ba7qPivESWJNPB5WWBL8z/OldWorkflowID_${CIRCLE_WORKFLOW_ID:0:7}  -d ${OldWorkflowID}
+            echo KVDB Old Workflow is: $(curl --insecure  https://kvdb.io/7ba7qPivESWJNPB5WWBL8z/OldWorkflowID_${CIRCLE_WORKFLOW_ID:0:7})
+            # Fetch the stack names
+            export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
+                    --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
+            echo stacks: "${STACKS[@]}"
+            # storing Stacks value in KVDB
+            if [[ "${STACKS}"  != "" ]]
+            then
+              curl https://kvdb.io/7ba7qPivESWJNPB5WWBL8z/Stacks_${CIRCLE_WORKFLOW_ID:0:7}  -d ${STACKS}
+            else
+              curl https://kvdb.io/7ba7qPivESWJNPB5WWBL8z/Stacks_${CIRCLE_WORKFLOW_ID:0:7}  -d 0
+            fi
+            echo KVDB Stacks are: $(curl --insecure  https://kvdb.io/7ba7qPivESWJNPB5WWBL8z/Stacks_${CIRCLE_WORKFLOW_ID:0:7})
+            
+      - run:
           name: Deploy backend infrastructure
           working_directory: ./.circleci/files
           command: |
@@ -499,22 +524,29 @@ jobs:
       - run:
           name: Get old stack workflow id from KVDB and delete related stacks and files and Clean up old environment
           command: |
-            OldWorkflowID=$(curl --insecure https://kvdb.io/7ba7qPivESWJNPB5WWBL8z/migration_$\{CIRCLE_WORKFLOW_ID:0:7})
+            OldWorkflowID=$(curl --insecure https://kvdb.io/7ba7qPivESWJNPB5WWBL8z/OldWorkflowID_${CIRCLE_WORKFLOW_ID:0:7})
             CurrentWorkflowID=${CIRCLE_WORKFLOW_ID:0:7}
 
+            export STACKS=$(curl --insecure  https://kvdb.io/7ba7qPivESWJNPB5WWBL8z/Stacks_${CIRCLE_WORKFLOW_ID:0:7})
+            echo Stacks: "${STACKS}"
+            
             if [[ "$CurrentWorkflowID" != "$OldWorkflowID" ]]
             then
-              echo "$OldWorkflowID!=$CurrentWorkflowID => will delete old version"
+              if [[ "${STACKS}"  != 0 ]]    
+              then
+                echo "$OldWorkflowID!=$CurrentWorkflowID => will delete old version"
 
-              aws s3 rm "s3://udapeople-kk1j287dhjppmz43780" --recursive --debug
-              aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
-              aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
-            else
+                aws s3 rb "s3://udapeople-${OldWorkflowID}/" --force
+                aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
+                aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
+              else
               echo "$OldWorkflowID==$CurrentWorkflowID => nothing needs to be done..."
+            else  
+              echo 'cleanup is not applicable'
             fi
           environment:
             TERM: xterm-256color
-
+# aws s3 rm "s3://udapeople-kk1j287dhjppmz43780" --recursive --debug
 
 workflows:
   default:
