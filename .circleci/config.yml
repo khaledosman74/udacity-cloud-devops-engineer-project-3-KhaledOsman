@@ -367,34 +367,47 @@ jobs:
       #    keys: [backend-deps]
       - run:
           name: Install dependencies
-          working_directory: /tmp
+          #working_directory: /tmp
           command: |
-            apk add --update ansible curl rsync openssh nodejs npm
-            ansible --version
+            apk add --update  ansible gzip tar npm curl rsync openssh nodejs
             pip install awscli
+            ansible --version
             aws --version
+      - run:
+          name: updating env variables
+          command: |
+            echo "TYPEORM_MIGRATIONS=${TYPEORM_MIGRATIONS}" >> backend/.env
+            echo "TYPEORM_ENTITIES=${TYPEORM_ENTITIES}" >> backend/.env
+            echo "TYPEORM_CONNECTION=${TYPEORM_CONNECTION}" >> backend/.env
+            echo "TYPEORM_HOST=${TYPEORM_HOST}" >> backend/.env
+            echo "TYPEORM_PORT=${TYPEORM_PORT}" >> backend/.env
+            echo "TYPEORM_USERNAME=${TYPEORM_USERNAME}" >> backend/.env
+            echo "TYPEORM_PASSWORD=${TYPEORM_PASSWORD}" >> backend/.env
+            echo "TYPEORM_DATABASE=${TYPEORM_DATABASE}" >> backend/.env
+            echo "ENVIRONMENT: production" >> backend/.env
       - run:
           name: Package Backend
           command: |
             cd backend
+            npm i
             npm run build
             cd .. 
+            tar -C backend -czvf artifact.tar.gz .
+            mkdir -v .circleci/ansible/roles/deploy/files
+            cp artifact.tar.gz .circleci/ansible/roles/deploy/files/artifact.tar.gz
+            cd .circleci/ansible/roles/deploy/files
+            ls
+            cd ~
 #cp backend/artifact.tar.gz .circleci/ansible/roles/deploy/files
 #tar -czf https://github.com/prometheus/node_exporter/releases/download/v0.17.0/node_exporter-0.17.0.linux-amd64.tar.gz dist/* package*
       - run:
           name: Deploy backend
           #working_directory: ./.circleci/ansible
-          command: |
-            cd backend
-            npm i
-            npm run build
-            cd ..
+          command: |           
             cd .circleci/ansible
-            echo "Contents  of the inventory.txt file is -------"
+            echo "Contents of the inventory.txt file is --------"
             cat inventory.txt
             ansible-playbook -i .circleci/ansible/inventory.txt deploy-server.yaml -vv
-  #tar -C backend -czvf artifact.tar.gz .
-
       - destroy_environment:
           id: ${CIRCLE_WORKFLOW_ID:0:7}
           when: on_fail
