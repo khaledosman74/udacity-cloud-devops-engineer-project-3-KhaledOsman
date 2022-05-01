@@ -244,12 +244,12 @@ jobs:
   configure-infrastructure:
     #executor: python
     docker:
-      -  image: python:3.9.0-alpine
-         environment:
-           NODE_ENV: "local"
-           VERSION: "1"
-           ENVOIRONMENT: "production"
-           TYPEORM_CONNECTION: $TYPEORM_CONNECTION
+      - image: python:3.9.0-alpine
+        environment:
+          NODE_ENV: "local"
+          VERSION: "1"
+          ENVOIRONMENT: "production"
+          TYPEORM_CONNECTION: $TYPEORM_CONNECTION
     steps:
       - checkout
       - add_ssh_keys:
@@ -383,7 +383,7 @@ jobs:
 #tar -czf https://github.com/prometheus/node_exporter/releases/download/v0.17.0/node_exporter-0.17.0.linux-amd64.tar.gz dist/* package*
       - run:
           name: Deploy backend
-          working_directory: ./.circleci/ansible
+          #working_directory: ./.circleci/ansible
           command: |
             cd backend
             npm i
@@ -560,10 +560,10 @@ workflows:
       - deploy-frontend:
           requires:
             - run-migrations
-    #  - smoke-test:
-    #      requires:
-    #        - deploy-backend
-    #        - deploy-frontend
+      - smoke-test:
+          requires:
+            - deploy-backend
+            - deploy-frontend
     #  - cloudfront-update:
     #      requires:
     #        - smoke-test
