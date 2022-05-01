@@ -485,7 +485,7 @@ jobs:
             aws cloudformation deploy \
               --template-file cloudfront.yaml \
               --stack-name udapeople-cloudfront-production \
-              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
+              --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
               --tags project=udapeople
               --debug
       - revert_migrations:
@@ -498,7 +498,7 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Clean up old environment
+          name: Get old stack workflow id from KVDB and delete related stacks and files and Clean up old environment
           command: |
             OldWorkflowID=$(curl --insecure https://kvdb.io/7ba7qPivESWJNPB5WWBL8z/migration_$\{CIRCLE_WORKFLOW_ID:0:7})
             CurrentWorkflowID=${CIRCLE_WORKFLOW_ID:0:7}
