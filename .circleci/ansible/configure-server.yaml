@@ -2,6 +2,9 @@
 - name: Configure udapeople infrastructure
   hosts: all
   user: ubuntu
+  become: true
+  become_method: sudo
+  become_user: root 
   gather_facts: false
   
   vars:
@@ -16,14 +19,11 @@
 
     - name: "Install python for Ansible."
       become: true
+      update_cache: yes
       raw: test -e /usr/bin/python3 || (apt -y update && apt install -y python3)
       changed_when: false
 
-    - setup:
-
-  roles:
-    - configure-server
-    - configure-prometheus-node-exporter
+  #  - setup:
 
   environment:
     - TYPEORM_CONNECTION: "{{ lookup('env', 'TYPEORM_CONNECTION')}}"
@@ -35,3 +35,8 @@
     - TYPEORM_DATABASE: "{{ lookup('env', 'TYPEORM_DATABASE')}}"
     - TYPEORM_MIGRATIONS: "{{ lookup('env', 'TYPEORM_MIGRATIONS')}}"
     - TYPEORM_MIGRATIONS_DIR: "{{ lookup('env', 'TYPEORM_MIGRATIONS_DIR')}}"
+
+    
+  roles:
+    - configure-server
+    - configure-prometheus-node-exporter
